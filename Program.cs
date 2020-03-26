@@ -24,7 +24,7 @@ namespace OrelCodesChallenge
 
 P.s. 
 Предполагаем, что самый маленький id от сервера - этого точка начала синхронизации. Т.е. до него все сообщения локально уже есть.*/
-        static StreamReader reader;
+        //static StreamReader reader;
         static int sL;
         static int[] s;//Серверная
         static int lL;
@@ -34,11 +34,11 @@ P.s.
         static int diffIndex = 0;
         static int readLnInt()
         {
-            return int.Parse(reader.ReadLine());
+            return int.Parse(Console.ReadLine());
         }
         static int[] splitLnInt()
         {
-            string[] arr = reader.ReadLine().Split(' ');
+            string[] arr = Console.ReadLine().Split(' ');
             int[] r = new int[arr.Length];
             for(int i = 0; i < arr.Length; i++)
             {
@@ -48,12 +48,32 @@ P.s.
         }
         static void Main(string[] args)
         {
+            Console.WriteLine("Длина серверного массива:");
+            int serverGenLen = readLnInt();
+            Console.WriteLine("Длина локального массива:");
+            int localGenLen = readLnInt();
+            Console.WriteLine("Отправная точка серверного массива:");
+            int startGenPoint = readLnInt();
+            int genTimestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute;
+            genTest(serverGenLen, localGenLen, startGenPoint);
+            genTimestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute - genTimestamp;
+            Console.WriteLine("Генерация теста завершена за: " + genTimestamp + "ms.");
+            /*Console.WriteLine("ТЕСТ");
+            Console.WriteLine("Сервер:");
+            for (int i = 0; i < sL; i++)
+                Console.Write(s[i] + " ");
+            Console.WriteLine();
+            Console.WriteLine("Локальный:");
+            for (int i = 0; i < lL; i++)
+                Console.Write(l[i] + " ");
+            Console.WriteLine();*/
+            Console.WriteLine("Начало вычислений...");
             int timestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute;
-            reader = new StreamReader(File.OpenRead("input_server.txt"));
-            s = splitLnInt();
-            sL = s.Length;
-            l = splitLnInt();
-            lL = l.Length;
+            //reader = new StreamReader(File.OpenRead("input_server.txt"));
+            //s = splitLnInt();
+            //sL = s.Length;
+            //l = splitLnInt();
+            //lL = l.Length;
             int index = indexOf(l, s[0]);
             res = new int[index + sL];
             diff = new int[sL];
@@ -74,9 +94,11 @@ P.s.
                 }
             }
             timestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute - timestamp;
-            /*for (int i = 0; i < res.Length; i++)
+            /*Console.WriteLine("Синхронизированный список:");
+            for (int i = 0; i < res.Length; i++)
                 Console.Write(res[i] + " ");
             Console.WriteLine();
+            Console.WriteLine("Недостающие сообщения:");
             for (int i = 0; i < diffIndex; i++)
                 Console.Write(diff[i] + " ");
             Console.WriteLine();*/
@@ -97,5 +119,40 @@ P.s.
             }
             return r; //arr[r] >= el
         }
+        static void genTest(int serverLength, int localLength, int serverPoint)
+        {
+            Random rnd = new Random();
+            sL = serverLength;
+            s = new int[sL];
+            lL = localLength;
+            l = new int[lL];
+            int point = serverPoint;
+            for(int i = 0; i < serverLength; i++)
+            {
+                s[i] = point;
+                point += rnd.Next(2) + 1;
+            }
+            for (int i = 0; i < serverPoint; i++)
+                l[i] = i;
+            shuffle(s);
+            for(int i = serverPoint; i < lL; i++)
+            {
+                l[i] = s[i];
+            }
+            Array.Sort(s);
+            Array.Sort(l);
+        }
+        static void shuffle(int[] arr)
+        {
+            Random rnd = new Random();
+            for(int i = 0; i < arr.Length; i++)
+            {
+                int index = rnd.Next(arr.Length);
+                int temp = arr[index];
+                arr[index] = arr[i];
+                arr[i] = temp;
+            }
+        }
+
     }
 }
