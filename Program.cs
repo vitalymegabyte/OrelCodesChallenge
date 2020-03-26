@@ -119,30 +119,30 @@ P.s.
             }
             return r; //arr[r] >= el
         }
-        static void genTest(int serverLength, int localLength, int serverPoint)
+        static void genTest(int serverLength, int localLength, int serverPoint) //Генератор теста. На вход: длина серверного массива, длина локального массива, точка начала на сервере (то есть первый элемент массива)
         {
-            Random rnd = new Random();
+            Random rnd = new Random(); 
             sL = serverLength;
             s = new int[sL];
             lL = localLength;
             l = new int[lL];
-            int point = serverPoint;
-            for(int i = 0; i < serverLength; i++)
+            int point = serverPoint; //Текущее значение для заполнения серверного массива
+            for(int i = 0; i < serverLength; i++) //Добавляет элементы рандомно в серверный массив
             {
                 s[i] = point;
                 point += rnd.Next(2) + 1;
             }
-            for (int i = 0; i < serverPoint; i++)
+            for (int i = 0; i < serverPoint; i++)//Добавляет в локальный массив сообщения, которые с сервером уже синхронизированы
                 l[i] = i;
-            shuffle(s);
-            for(int i = serverPoint; i < lL; i++)
+            shuffle(s); //Перемешать серверный массив
+            for(int i = serverPoint; i < lL; i++)//Получить случайные значения из серверного массива для заполнения локального
             {
                 l[i] = s[i];
             }
-            Array.Sort(s);
+            Array.Sort(s); //Сортировка обоих, т.к. серверный был перемешан
             Array.Sort(l);
         }
-        static void shuffle(int[] arr)
+        static void shuffle(int[] arr) //Перемешивание массива. Работает тупо за счет обмена элементов, ничего интересного
         {
             Random rnd = new Random();
             for(int i = 0; i < arr.Length; i++)
