@@ -29,15 +29,16 @@ P.s.
         static int[] s;//Серверная
         static int lL;
         static int[] l;//Локалка
+        static StreamReader reader;
         static int readLnInt()
         {
-            return int.Parse(Console.ReadLine());
+            return int.Parse(reader.ReadLine());
         }
         static int[] splitLnInt()
         {
-            string[] arr = Console.ReadLine().Split(' ');
+            string[] arr = reader.ReadToEnd().Split('\n');
             int[] r = new int[arr.Length];
-            for (int i = 0; i < arr.Length; i++)
+            for (int i = 0; i < arr.Length - 1; i++)
             {
                 r[i] = int.Parse(arr[i]);
             }
@@ -45,7 +46,7 @@ P.s.
         }
         static void Main(string[] args)
         {
-            Console.WriteLine("Длина серверного массива:");
+            /*Console.WriteLine("Длина серверного массива:");
             int serverGenLen = readLnInt();
             Console.WriteLine("Длина локального массива:");
             int localGenLen = readLnInt();
@@ -54,7 +55,7 @@ P.s.
             int genTimestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute;
             genTest(serverGenLen, localGenLen, startGenPoint);
             genTimestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute - genTimestamp;
-            Console.WriteLine("Генерация теста завершена за: " + genTimestamp + "ms.");
+            Console.WriteLine("Генерация теста завершена за: " + genTimestamp + "ms.");*/
             /*Console.WriteLine("ТЕСТ");
             Console.WriteLine("Сервер:");
             for (int i = 0; i < sL; i++)
@@ -67,11 +68,17 @@ P.s.
             int[] res; //Вывод общий
             int[] diff; //Разница
             int diffIndex = 0;
+            int timestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute;
+            reader = new StreamReader(File.Open("input_local.txt", FileMode.Open));
+            l = splitLnInt();
+            reader = new StreamReader(File.Open("input_server.txt", FileMode.Open));
+            s = splitLnInt();
+            sL = s.Length;
+            lL = l.Length;
             Console.WriteLine("Начало вычислений...");
-            int[] timestamps = new int[1000];
-            for (int r = 0; r < 1000; r++)
-            {
-                int timestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute;
+            //int[] timestamps = new int[1000];
+            //for (int r = 0; r < 1000; r++)
+            //{
                 //reader = new StreamReader(File.OpenRead("input_server.txt"));
                 //s = splitLnInt();
                 //sL = s.Length;
@@ -96,22 +103,35 @@ P.s.
                         diffIndex++;
                     }
                 }
-                timestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute - timestamp;
-                timestamps[r] = timestamp;
-                diffIndex = 0;
-                /*Console.WriteLine("Синхронизированный список:");
-                for (int i = 0; i < res.Length; i++)
-                    Console.Write(res[i] + " ");
-                Console.WriteLine();
-                Console.WriteLine("Недостающие сообщения:");
-                for (int i = 0; i < diffIndex; i++)
-                    Console.Write(diff[i] + " ");
-                Console.WriteLine();*/
-                Console.Write(timestamp + ", ");
+            StreamWriter writer = new StreamWriter(File.Create("output_result.txt"));
+            for(int i = 0; i < res.Length; i++)
+            {
+                writer.WriteLine(res[i]);
             }
+            writer.Close();
+            writer = new StreamWriter(File.Create("output_missing.txt"));
+            for (int i = 0; i < diffIndex; i++)
+            {
+                writer.WriteLine(diff[i]);
+            }
+            writer.Close();
+            timestamp = DateTime.Now.Millisecond + 1000 * DateTime.Now.Second + 60000 * DateTime.Now.Minute - timestamp;
+            //timestamps[r] = timestamp;
+            //diffIndex = 0;
+            /*Console.WriteLine("Синхронизированный список:");
+            for (int i = 0; i < res.Length; i++)
+                Console.Write(res[i] + " ");
             Console.WriteLine();
-            Array.Sort(timestamps);
-            Console.WriteLine("Медианное время: " + timestamps[500] + "ms. Максимальное время: " + timestamps[999] + "ms. Минимальное время: " + timestamps[0] + "ms.");
+            Console.WriteLine("Недостающие сообщения:");
+            for (int i = 0; i < diffIndex; i++)
+                Console.Write(diff[i] + " ");
+            Console.WriteLine();*/
+            //Console.Write(timestamp + ", ");
+            //}
+            //Console.WriteLine();
+            //Array.Sort(timestamps);
+            Console.WriteLine(timestamp + "ms");
+            //Console.WriteLine("Медианное время: " + timestamps[500] + "ms. Максимальное время: " + timestamps[999] + "ms. Минимальное время: " + timestamps[0] + "ms.");
             Console.ReadKey();
         }
         static int indexOf(int[] arr, int el)
